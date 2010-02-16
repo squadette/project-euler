@@ -2,15 +2,17 @@
 m = 20
 alen = 4
 
-result011 = [maximum horiz, maximum vert, maximum diag]
+result011 = maximum [maximum horiz, maximum vert, maximum diag, maximum rdiag]
 
-setup_crawl dx dy = crawl [0..m - 1 - dx * alen] [0..m - 1 - dy * alen] (coord_d dx dy)
+setup_crawl dx dy lpad rpad = crawl [lpad..m - 1 - rpad] [lpad..m - 1 - dy * alen] (coord_d dx dy)
 
-horiz = setup_crawl 1 0
+horiz = setup_crawl   1 0  0          alen
 
-vert = setup_crawl 0 1
+vert  = setup_crawl   0 1  0          0
 
-diag = setup_crawl 1 1
+diag  = setup_crawl   1 1  0          alen
+
+rdiag = setup_crawl (-1) 1 (alen - 1) 0
 
 coord_d dx dy (x, y) = (x + dx, y + dy)
 
