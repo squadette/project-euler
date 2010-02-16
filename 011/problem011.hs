@@ -3,17 +3,16 @@ m = 20
 alen = 4
 
 result011 = [maximum horiz, maximum vert, maximum diag]
---result011 = length horiz
 
-horiz = crawl [0..m - alen] [0..m - 1] coord_horiz
+setup_crawl dx dy = crawl [0..m - 1 - dx * alen] [0..m - 1 - dy * alen] (coord_d dx dy)
 
-vert = crawl [0..m - 1] [0..m - alen] coord_vert
+horiz = setup_crawl 1 0
 
-diag = crawl [0..m - alen] [0..m - alen] coord_diag
+vert = setup_crawl 0 1
 
-coord_horiz (x, y) = (x + 1, y)
-coord_vert (x, y) = (x, y + 1)
-coord_diag (x, y) = (x + 1, y + 1)
+diag = setup_crawl 1 1
+
+coord_d dx dy (x, y) = (x + dx, y + dy)
 
 crawl xs ys coord_fun = map product (map nums cell_coords)
     where
