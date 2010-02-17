@@ -12,15 +12,14 @@ collatz_len2 n cache = (answer, cache3)
                              cache3 = Map.insert n answer cache2
 
 collatz_len :: Integer -> State (Map.Map Integer Integer) Integer
-collatz_len n = get >>= \cache -> let (ans, cache2) = case Map.lookup n cache of
-                                                        Just answer -> (answer, cache)
-                                                        Nothing -> (collatz_len2 n cache)
-                                  in put cache2 >> return ans
+collatz_len n = get >>= \cache -> case Map.lookup n cache of 
+                                    Just answer -> return answer
+                                    Nothing -> let (answer, cache2) = (collatz_len2 n cache)
+                                               in put cache2 >> return answer
 
 print_step :: Integer -> IO ()
 print_step n = do
-  putStrLn (show n)
-  putStrLn (show (maximum (evalState (mapM collatz_len [n..n+step-1]) Map.empty)))
+  putStrLn $ (show n) ++ "\t" ++ (show (maximum (evalState (mapM collatz_len [n..n+step-1]) Map.empty)))
 
 result014 n = mapM_ print_step [k | k <- [1,step+1..n]]
 
