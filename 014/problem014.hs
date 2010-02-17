@@ -12,17 +12,12 @@ collatz_len2 n cache = (answer, cache3)
 collatz_len :: Integer -> State (Map.Map Integer Integer) Integer
 collatz_len 1 = return 1
 collatz_len n = do
-  cache <- get
-  let (ans, cache2) = collatz_len2 n cache
-  put cache2
-  return ans
+  get >>= \cache -> let (ans, cache2) = case Map.lookup n cache of
+                                          Just answer -> (answer, cache)
+                                          Nothing -> (collatz_len2 n cache)
+                    in put cache2 >> return ans
 
-result014 n = runState (collatz_len 13) Map.empty                      -- maximum (map collatz_len [1..n])
-
---collatz_len' 1 = 1
---collatz_len' n
---    | odd n = 1 + collatz_len' (3 * n + 1)
---    | otherwise = 1 + collatz_len' (n `div` 2)
+result014 n = maximum (evalState (mapM collatz_len [1..n]) Map.empty)
 
 main :: IO ()
 main = print $ result014 1000000
