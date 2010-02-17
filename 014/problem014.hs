@@ -7,18 +7,24 @@ import System.IO
 
 step = 1000
 
-collatz_len2 :: Integer -> Map.Map Integer Integer -> (Integer, Map.Map Integer Integer)
-collatz_len2 1 cache = (1, cache)
-collatz_len2 n cache = case Map.lookup n cache of
-                         Just answer -> (answer, cache)
-                         Nothing -> (answer, cache3)
-                             where (nrest, cache2) = collatz_len2 (if odd n then 3 * n + 1 else n `div` 2) cache
-                                   answer = 1 + nrest
-                                   cache3 = Map.insert n answer cache2
+collatz_len2 :: Integer -> State (Map.Map Integer Integer) Integer
+collatz_len2 1 = return 1
+collatz_len2 n = do
+  cache <- get
+  case Map.lookup n cache of
+    Just answer -> return answer
+    Nothing -> do
+      let (nrest, cache2) = runState (collatz_len2 (if odd n then 3 * n + 1 else n `div` 2)) cache
+      let answer = 1 + nrest
+      put (Map.insert n answer cache2)
+      return answer
 
 collatz_len :: Integer -> State (Map.Map Integer Integer) (Integer, Integer)
-collatz_len n = get >>= \cache -> let (answer, cache2) = collatz_len2 n cache
-                                  in put cache2 >> return (n, answer)
+collatz_len n = do
+  cache <- get
+  let (answer, cache2) = runState (collatz_len2 n) cache
+  put cache2
+  return (n, answer)
 
 print_step :: Map.Map Integer Integer -> Integer -> IO ()
 print_step cache 1 = return ()
