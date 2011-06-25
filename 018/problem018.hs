@@ -1,5 +1,6 @@
 
 import List
+import System.Environment
 import System.IO
 
 data TriangleCell = TriangleCell {
@@ -63,7 +64,8 @@ process_lines inh prev_triangle = do
   
 main :: IO ()
 main = do
-       inh <- openFile "triangle-018.txt" ReadMode
+       args <- getArgs
+       inh <- openFile (args !! 0) ReadMode
        line <- hGetLine inh
        triangle <- process_lines inh (top_triangle (read line))
        hPutStrLn stdout (show (maximum (map total (cells triangle))))
