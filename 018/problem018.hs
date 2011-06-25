@@ -20,21 +20,16 @@ top_triangle x = Triangle { cells = [TriangleCell { number = x, total = x, max_p
                             prev_triangle = Nothing }
 
 process_line' :: [Integer] -> Triangle -> Triangle
-process_line' numbers prev_tri = Triangle { cells = sparse_cells, prev_triangle = Just prev_tri }
+process_line' numbers prev_tri = Triangle { cells = ndx_cells, prev_triangle = Just prev_tri }
               where
-              sparse_numbers = intersperse (-1000) numbers
-              sparse_count = length sparse_numbers
-              sparse_cells = [ sparse_cell i | i <- [0..sparse_count - 1]]
-              sparse_cell ndx = if (even ndx)
-                                  then cell ndx
-                                  else TriangleCell { number = 0, total = 0, max_path = [], max_path_indices = [] }
+              ndx_cells = [ cell i | i <- [0..(length numbers) - 1]]
               cell ndx = if ndx == 0
                             then triangle_cell ndx
-                            else if ndx == sparse_count - 1
-                                    then triangle_cell (ndx - 2)
-                                    else choose_triangle (triangle_cell ndx) (triangle_cell (ndx - 2))
+                            else if ndx == (length numbers) - 1
+                                    then triangle_cell (ndx - 1)
+                                    else choose_triangle (triangle_cell ndx) (triangle_cell (ndx - 1))
                          where 
-                            n = sparse_numbers !! ndx
+                            n = numbers !! ndx
                             triangle_cell i = TriangleCell { number = n, 
                                                              total = n + total prev_cell,
                                                              max_path = [n] ++ max_path prev_cell,
