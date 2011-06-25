@@ -31,7 +31,7 @@ process_line' numbers prev_tri = Triangle { cells = sparse_cells, prev_triangle 
                             then triangle_cell ndx
                             else if ndx == sparse_count - 1
                                     then triangle_cell (ndx - 2)
-                                    else error "need choosing"
+                                    else choose_triangle (triangle_cell ndx) (triangle_cell (ndx - 2))
                          where 
                             n = sparse_numbers !! ndx
                             triangle_cell i = TriangleCell { number = n, 
@@ -40,6 +40,9 @@ process_line' numbers prev_tri = Triangle { cells = sparse_cells, prev_triangle 
                                                              max_path_indices = [toInteger ndx] ++ max_path_indices prev_cell
                                                            }
                                               where prev_cell = (cells prev_tri) !! i
+                            choose_triangle tri1 tri2 = if (total tri1 > total tri2)
+                                                            then tri1
+                                                            else tri2
                          
 process_line :: String -> Triangle -> Triangle
 process_line line triangle = if (length numbers) == 1
@@ -63,5 +66,5 @@ main = do
        inh <- openFile "triangle-018.txt" ReadMode
        line <- hGetLine inh
        triangle <- process_lines inh (top_triangle (read line))
-       hPutStrLn stdout (show triangle)
+       hPutStrLn stdout (show (maximum (map total (cells triangle))))
        hClose inh
