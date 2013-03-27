@@ -6,3 +6,7 @@ problem% : problem%.hs
 
 .PHONY: all
 all: $(binaries)
+
+.PHONY: clean
+clean:
+	rm -f problem??? *.o *.hi
