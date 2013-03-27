@@ -1,5 +1,5 @@
 
-import List
+import Data.List
 import System.Environment
 import System.IO
 

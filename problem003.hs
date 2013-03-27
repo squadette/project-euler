@@ -1,4 +1,4 @@
-import List (find)
+import Data.List (find)
 
 sqrt' :: Float -> Integer
 sqrt' x = if odd t then t else t + 1
